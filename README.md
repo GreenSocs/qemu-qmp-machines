@@ -16,17 +16,23 @@ files in order to test in a single terminal. It only discards
 the comment and watches if qemu crashes.
 
 But in order to start qemu the 2 followings commands can be typed
-in 2 diffrent terminals:
+in 2 different terminals:
 
 ```
-qemu-system-ARCH -preconfig -qmp unix:/tmp/qmp-socket,server ....
+qemu-system-ARCH -display none -preconfig -qmp unix:/tmp/qmp-socket,server -serial mon:stdio ....
 grep -v '^#' some-file.qmp | qmp-shell -v /tmp/qmp-socket
 ```
+
+Note that you'll need to load a firmware and exit the preconfig on
+the monitor.
+
 Note that some additional arguments must be given to qemu.
-Generally we gives `-machine none -cpu some-cpu-type` to start
-from an empty machine with a given cpu.
+Generally we gives `-machine none` to start from an empty machine.
+We may need to specify the ram size with eg `-m size=64K`.
+
 Please look at the content of `run-*-qmp.sh` scripts, they
-almost only consists in a qemu starting command line.
+almost only consists in a qemu starting command line plus one
+qapi to load a firmware.
 
 ## opentitan
 

@@ -1,105 +1,115 @@
-x-machine-init
+# RAM/DTIM 0x80000000 (need to do that before machine-init -> before any device_add)
+#Note: ram size must be set on CLI eg -m size=64K
+qom-set path=/machine property=ram-addr value=2147483648
+#device_add driver=sysbus-memory id=dtim size=0x4000 readonly=false
+#sysbus-mmio-map device=dtim addr=0x80000000
 
-# MROM         0x1000
-device_add        driver=sysbus-memory id=mrom size=0x2000 readonly=true
-x-sysbus-mmio-map device=mrom addr=4096
+# MROM 0x1000
+device_add driver=sysbus-memory id=mrom size=0x2000 readonly=true
+sysbus-mmio-map device=mrom addr=4096
 
-# XIP      0x20000000
-device_add        driver=sysbus-memory id=xip size=0x20000000 readonly=true
-x-sysbus-mmio-map device=xip addr=536870912
+# XIP 0x20000000
+device_add driver=sysbus-memory id=xip size=0x20000000 readonly=true
+sysbus-mmio-map device=xip addr=536870912
 
-# DTIM     0x80000000
-device_add        driver=sysbus-memory id=dtim size=0x4000
-x-sysbus-mmio-map device=dtim addr=2147483648
+# CPUS
+device_add driver=riscv.hart_array id=cpus cpu-type=sifive-e31-riscv-cpu num-harts=1
 
-# PLIC      0xc000000
-device_add        driver=riscv.sifive.plic id=plic hart-config=M hartid-base=0 num-sources=127 num-priorities=7 priority-base=0x04 pending-base=0x1000 enable-base=0x2000 enable-stride=0x80 context-base=0x200000 context-stride=0x1000 aperture-size=0x4000000 
-x-sysbus-mmio-map device=plic addr=201326592
+# PLIC 0xc000000
+device_add driver=riscv.sifive.plic id=plic hart-config=M hartid-base=0 num-sources=127 num-priorities=7 priority-base=0x04 pending-base=0x1000 enable-base=0x2000 enable-stride=0x80 context-base=0x200000 context-stride=0x1000 aperture-size=0x4000000
+sysbus-mmio-map device=plic addr=201326592
+#output irqs for S mode start at [0]
+#output irqs for M mode start at [num_harts]
+qom-set path=plic property=unnamed-gpio-out[1] value=cpus/harts[0]/unnamed-gpio-in[11]
 
-# CLINT     0x2000000
-device_add        driver=riscv.sifive.clint id=clint hartid-base=0 num-harts=1 sip-base=0x0 timecmp-base=0x4000 time-base=0xbff8 aperture-size=0x10000 timebase-freq=10000000
-x-sysbus-mmio-map device=clint addr=33554432
 
-# PRCI     0x10008000
-device_add        driver=riscv.sifive.e.prci id=prci
-x-sysbus-mmio-map device=prci addr=268468224
+# ACLINT 0x2000000
+device_add driver=riscv.aclint.swi id=aclint.swi hartid-base=0 num-harts=1 sswi=0
+sysbus-mmio-map device=aclint.swi addr=33554432
+#input: sswi ? in[1] : in[3]
+qom-set path=aclint.swi property=unnamed-gpio-out[0] value=cpus/harts[0]/unnamed-gpio-in[3]
 
-# DEBUG           0x0
-# OTP         0x20000
+device_add driver=riscv.aclint.mtimer id=aclint.mtimer hartid-base=0 num-harts=1 timecmp-base=0x0 time-base=0x7ff8 aperture-size=0x8000 timebase-freq=10000000
+sysbus-mmio-map device=aclint.mtimer addr=33570816
+
+# PRCI 0x10008000
+device_add driver=riscv.sifive.e.prci id=prci
+sysbus-mmio-map device=prci addr=268468224
+
+# DEBUG 0x0
+# OTP 0x20000
 # OTP_CTRL 0x10010000
 
-# UART0    0x10013000
-device_add        driver=riscv.sifive.uart id=uart0 chardev=serial0
-x-sysbus-mmio-map device=uart0 addr=268513280
-qom-set           path=uart0 property=sysbus-irq[0] value=plic/unnamed-gpio-in[3]
+# UART0 0x10013000
+device_add driver=riscv.sifive.uart id=uart0 chardev=serial0
+sysbus-mmio-map device=uart0 addr=268513280
+qom-set path=uart0 property=sysbus-irq[0] value=plic/unnamed-gpio-in[3]
 
-# UART1    0x10023000
-device_add        driver=riscv.sifive.uart id=uart1 chardev=serial1
-x-sysbus-mmio-map device=uart1 addr=268578816
-qom-set           path=uart1 property=sysbus-irq[0] value=plic/unnamed-gpio-in[4]
+# UART1 0x10023000
+device_add driver=riscv.sifive.uart id=uart1 chardev=serial1
+sysbus-mmio-map device=uart1 addr=268578816
+qom-set path=uart1 property=sysbus-irq[0] value=plic/unnamed-gpio-in[4]
 
-# GPIO0    0x10012000
-device_add        driver=sifive_soc.gpio id=gpio ngpio=32
-x-sysbus-mmio-map device=gpio addr=268509184
-qom-set           path=gpio property=sysbus-irq[0] value=plic/unnamed-gpio-in[8]
-qom-set           path=gpio property=sysbus-irq[1] value=plic/unnamed-gpio-in[9]
-qom-set           path=gpio property=sysbus-irq[2] value=plic/unnamed-gpio-in[10]
-qom-set           path=gpio property=sysbus-irq[3] value=plic/unnamed-gpio-in[11]
-qom-set           path=gpio property=sysbus-irq[4] value=plic/unnamed-gpio-in[12]
-qom-set           path=gpio property=sysbus-irq[5] value=plic/unnamed-gpio-in[13]
-qom-set           path=gpio property=sysbus-irq[6] value=plic/unnamed-gpio-in[14]
-qom-set           path=gpio property=sysbus-irq[7] value=plic/unnamed-gpio-in[15]
-qom-set           path=gpio property=sysbus-irq[8] value=plic/unnamed-gpio-in[16]
-qom-set           path=gpio property=sysbus-irq[9] value=plic/unnamed-gpio-in[17]
-qom-set           path=gpio property=sysbus-irq[10] value=plic/unnamed-gpio-in[18]
-qom-set           path=gpio property=sysbus-irq[11] value=plic/unnamed-gpio-in[19]
-qom-set           path=gpio property=sysbus-irq[12] value=plic/unnamed-gpio-in[20]
-qom-set           path=gpio property=sysbus-irq[13] value=plic/unnamed-gpio-in[21]
-qom-set           path=gpio property=sysbus-irq[14] value=plic/unnamed-gpio-in[22]
-qom-set           path=gpio property=sysbus-irq[15] value=plic/unnamed-gpio-in[23]
-qom-set           path=gpio property=sysbus-irq[16] value=plic/unnamed-gpio-in[24]
-qom-set           path=gpio property=sysbus-irq[17] value=plic/unnamed-gpio-in[25]
-qom-set           path=gpio property=sysbus-irq[18] value=plic/unnamed-gpio-in[26]
-qom-set           path=gpio property=sysbus-irq[19] value=plic/unnamed-gpio-in[27]
-qom-set           path=gpio property=sysbus-irq[20] value=plic/unnamed-gpio-in[28]
-qom-set           path=gpio property=sysbus-irq[21] value=plic/unnamed-gpio-in[29]
-qom-set           path=gpio property=sysbus-irq[22] value=plic/unnamed-gpio-in[30]
-qom-set           path=gpio property=sysbus-irq[23] value=plic/unnamed-gpio-in[31]
-qom-set           path=gpio property=sysbus-irq[24] value=plic/unnamed-gpio-in[32]
-qom-set           path=gpio property=sysbus-irq[25] value=plic/unnamed-gpio-in[33]
-qom-set           path=gpio property=sysbus-irq[26] value=plic/unnamed-gpio-in[34]
-qom-set           path=gpio property=sysbus-irq[27] value=plic/unnamed-gpio-in[35]
-qom-set           path=gpio property=sysbus-irq[28] value=plic/unnamed-gpio-in[36]
-qom-set           path=gpio property=sysbus-irq[29] value=plic/unnamed-gpio-in[37]
-qom-set           path=gpio property=sysbus-irq[30] value=plic/unnamed-gpio-in[38]
-qom-set           path=gpio property=sysbus-irq[31] value=plic/unnamed-gpio-in[39]
+# GPIO0 0x10012000
+device_add driver=sifive_soc.gpio id=gpio ngpio=32
+sysbus-mmio-map device=gpio addr=268509184
+qom-set path=gpio property=sysbus-irq[0] value=plic/unnamed-gpio-in[8]
+qom-set path=gpio property=sysbus-irq[1] value=plic/unnamed-gpio-in[9]
+qom-set path=gpio property=sysbus-irq[2] value=plic/unnamed-gpio-in[10]
+qom-set path=gpio property=sysbus-irq[3] value=plic/unnamed-gpio-in[11]
+qom-set path=gpio property=sysbus-irq[4] value=plic/unnamed-gpio-in[12]
+qom-set path=gpio property=sysbus-irq[5] value=plic/unnamed-gpio-in[13]
+qom-set path=gpio property=sysbus-irq[6] value=plic/unnamed-gpio-in[14]
+qom-set path=gpio property=sysbus-irq[7] value=plic/unnamed-gpio-in[15]
+qom-set path=gpio property=sysbus-irq[8] value=plic/unnamed-gpio-in[16]
+qom-set path=gpio property=sysbus-irq[9] value=plic/unnamed-gpio-in[17]
+qom-set path=gpio property=sysbus-irq[10] value=plic/unnamed-gpio-in[18]
+qom-set path=gpio property=sysbus-irq[11] value=plic/unnamed-gpio-in[19]
+qom-set path=gpio property=sysbus-irq[12] value=plic/unnamed-gpio-in[20]
+qom-set path=gpio property=sysbus-irq[13] value=plic/unnamed-gpio-in[21]
+qom-set path=gpio property=sysbus-irq[14] value=plic/unnamed-gpio-in[22]
+qom-set path=gpio property=sysbus-irq[15] value=plic/unnamed-gpio-in[23]
+qom-set path=gpio property=sysbus-irq[16] value=plic/unnamed-gpio-in[24]
+qom-set path=gpio property=sysbus-irq[17] value=plic/unnamed-gpio-in[25]
+qom-set path=gpio property=sysbus-irq[18] value=plic/unnamed-gpio-in[26]
+qom-set path=gpio property=sysbus-irq[19] value=plic/unnamed-gpio-in[27]
+qom-set path=gpio property=sysbus-irq[20] value=plic/unnamed-gpio-in[28]
+qom-set path=gpio property=sysbus-irq[21] value=plic/unnamed-gpio-in[29]
+qom-set path=gpio property=sysbus-irq[22] value=plic/unnamed-gpio-in[30]
+qom-set path=gpio property=sysbus-irq[23] value=plic/unnamed-gpio-in[31]
+qom-set path=gpio property=sysbus-irq[24] value=plic/unnamed-gpio-in[32]
+qom-set path=gpio property=sysbus-irq[25] value=plic/unnamed-gpio-in[33]
+qom-set path=gpio property=sysbus-irq[26] value=plic/unnamed-gpio-in[34]
+qom-set path=gpio property=sysbus-irq[27] value=plic/unnamed-gpio-in[35]
+qom-set path=gpio property=sysbus-irq[28] value=plic/unnamed-gpio-in[36]
+qom-set path=gpio property=sysbus-irq[29] value=plic/unnamed-gpio-in[37]
+qom-set path=gpio property=sysbus-irq[30] value=plic/unnamed-gpio-in[38]
+qom-set path=gpio property=sysbus-irq[31] value=plic/unnamed-gpio-in[39]
 
-# AON      0x10000000
-device_add        driver=unimplemented-device id=aon name=aon size=0x8000
-x-sysbus-mmio-map device=aon addr=268435456
+# AON 0x10000000
+device_add driver=unimplemented-device id=aon name=aon size=0x8000
+sysbus-mmio-map device=aon addr=268435456
 
-# QSPI0    0x10014000
-device_add        driver=unimplemented-device id=qspi0 name=qspi0 size=0x1000
-x-sysbus-mmio-map device=qspi0 addr=268517376
+# QSPI0 0x10014000
+device_add driver=unimplemented-device id=qspi0 name=qspi0 size=0x1000
+sysbus-mmio-map device=qspi0 addr=268517376
 
-# QSPI1    0x10024000
-device_add        driver=unimplemented-device id=qspi1 name=qspi1 size=0x1000
-x-sysbus-mmio-map device=qspi1 addr=268582912
+# QSPI1 0x10024000
+device_add driver=unimplemented-device id=qspi1 name=qspi1 size=0x1000
+sysbus-mmio-map device=qspi1 addr=268582912
 
-# QSPI2    0x10034000
-device_add        driver=unimplemented-device id=qspi2 name=qspi2 size=0x1000
-x-sysbus-mmio-map device=qspi2 addr=268648448
+# QSPI2 0x10034000
+device_add driver=unimplemented-device id=qspi2 name=qspi2 size=0x1000
+sysbus-mmio-map device=qspi2 addr=268648448
 
-# PWM0     0x10015000
-device_add        driver=unimplemented-device id=pwm0 name=pwm0 size=0x1000
-x-sysbus-mmio-map device=pwm0 addr=268521472
+# PWM0 0x10015000
+device_add driver=unimplemented-device id=pwm0 name=pwm0 size=0x1000
+sysbus-mmio-map device=pwm0 addr=268521472
 
-# PWM1     0x10025000
-device_add        driver=unimplemented-device id=pwm1 name=pwm1 size=0x1000
-x-sysbus-mmio-map device=pwm1 addr=268587008
+# PWM1 0x10025000
+device_add driver=unimplemented-device id=pwm1 name=pwm1 size=0x1000
+sysbus-mmio-map device=pwm1 addr=268587008
 
-# PWM2     0x10035000
-device_add        driver=unimplemented-device id=pwm2 name=pwm2 size=0x1000
-x-sysbus-mmio-map device=pwm2 addr=268652544
-
-x-exit-preconfig
+# PWM2 0x10035000
+device_add driver=unimplemented-device id=pwm2 name=pwm2 size=0x1000
+sysbus-mmio-map device=pwm2 addr=268652544
