@@ -12,12 +12,11 @@ then
     exit 1
 fi
 
-if test ! -e "opentitan.qmp"
+if test ! -e machine.qmp
 then
-     echo "'opentitan.qmp' does not exists">&2
-     exit 1
+    echo "'machine.qmp' does not exists">&2
+    exit 1
 fi
-
 
 elf=$1
 shift
@@ -25,7 +24,7 @@ shift
 QMP_SOCKET=/tmp/qmp-socket
 
 gen_config() {
-    cat opentitan.qmp - <<EOF
+    cat machine.qmp - <<EOF
 device_add driver=loader file=$(realpath $elf) cpu-num=0
 x-exit-preconfig
 EOF
@@ -34,10 +33,10 @@ EOF
 #run the config process in background, we give it our PID ($$)
 #so that it stops if qemu crashes early
 rm -f $QMP_SOCKET
-QMP_SOCKET=$QMP_SOCKET QEMUPID=$$ ./qmp-config.sh <(gen_config) -v &
+QMP_SOCKET=$QMP_SOCKET QEMUPID=$$ qmp-config.sh <(gen_config) -v &
 
 qemu-system-riscv32 -preconfig -display none \
     -qmp unix:$QMP_SOCKET,server \
-    -M none \
-    -serial mon:stdio \
+    -M none -m size=64K \
+    -serial mon:stdio -serial null \
     "$@"

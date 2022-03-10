@@ -1,0 +1,113 @@
+# RAM 0x10000000 (need to do that before machine-init -> before any - device_add)
+#Note: ram size must be set on CLI eg -m size: 64K
+#- qom-set path: /machine property=ram-addr value=0x10000000
+- device_add:
+    driver: sysbus-memory
+    id: ram
+    size: 0x4000
+    readonly: false
+- sysbus-mmio-map:
+    device: ram
+    addr: 0x10000000
+
+# CPUS
+- device_add:
+    driver: riscv.hart_array
+    id: cpus
+    cpu-type: lowrisc-ibex-riscv-cpu
+    num-harts: 1
+    resetvec: 0x8080
+
+# ROM 0x00008000
+- device_add:
+    driver: sysbus-memory
+    id: rom
+    size: 0x4000
+    readonly: true
+- sysbus-mmio-map:
+    device: rom
+    addr: 0x8000
+
+# FLASH 0x20000000
+- device_add:
+    driver: sysbus-memory
+    id: flash
+    size: 0x80000
+    readonly: true
+- sysbus-mmio-map:
+    device: flash
+    addr: 0x20000000
+
+# FLASH_VIRTUAL 0x80000000 (aliases are not exposed in qapi)
+- device_add:
+    driver: unimplemented-device
+    id: flash_virtual
+    size: 0x80000
+    name: flash_virtual
+- sysbus-mmio-map:
+    device: flash_virtual
+    addr: 0x80000000
+
+# PLIC 0x48000000
+- device_add:
+    driver: riscv.sifive.plic
+    id: plic
+    hart-config: M
+    hartid-base: 0
+    num-sources: 180
+    num-priorities: 3
+    priority-base: 0x0
+    pending-base: 0x1000
+    enable-base: 0x2000
+    enable-stride: 32
+    context-base: 0x200000
+    context-stride: 8
+    aperture-size: 0x4005000
+- sysbus-mmio-map:
+    device: plic
+    addr: 0x48000000
+- qom-set:
+    path: plic
+    property: unnamed-gpio-out[1]
+    value: cpus/harts[0]/unnamed-gpio-in[11]
+
+# UART 0x40000000
+- device_add:
+    driver: ibex-uart
+    id: uart
+    chardev: serial0
+- sysbus-mmio-map:
+    device: uart
+    addr: 0x40000000
+- qom-set:
+    path: uart
+    property: sysbus-irq[0]
+    value: plic/unnamed-gpio-in[1]
+- qom-set:
+    path: uart
+    property: sysbus-irq[1]
+    value: plic/unnamed-gpio-in[2]
+- qom-set:
+    path: uart
+    property: sysbus-irq[2]
+    value: plic/unnamed-gpio-in[3]
+- qom-set:
+    path: uart
+    property: sysbus-irq[3]
+    value: plic/unnamed-gpio-in[4]
+
+# TIMER 0x40100000
+- device_add:
+    driver: ibex-timer
+    id: timer
+- sysbus-mmio-map:
+    device: timer
+    addr: 0x40100000
+- qom-set:
+    path: timer
+    property: sysbus-irq[0]
+    value: plic/unnamed-gpio-in[126]
+- qom-set:
+    path: timer
+    property: unnamed-gpio-out[0]
+    value: cpus/harts[0]/unnamed-gpio-in[7]

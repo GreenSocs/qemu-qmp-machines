@@ -1,0 +1,9 @@
+[submodule "freedom-e-sdk"]
+	path = freedom-e-sdk
+	url = https://github.com/sifive/freedom-e-sdk.git
+[submodule "opentitan/fw"]
+	path = opentitan/fw
+	url = ../opentitan-fw.git
+[submodule "qemu"]
+	path = qemu
+	url = ../qemu.git

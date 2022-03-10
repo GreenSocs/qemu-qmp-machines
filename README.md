@@ -1,83 +1,61 @@
+# QMP Machines
 
-# Testing the qmp creation machine
+This repo contains machines in order to test dynamic
+creation of machine in QEMU.
 
-This directory contains several examples to demonstrate how to
-use and test the creation of machine using qmp commands. You need
-a qemu supporting this feature. Our working branch is located here:
-https://github.com/GreenSocs/qemu/tree/qmp-machine
+There are several submodules (qemu and firmware related
+repositories). Setting them up is not mandatory for testing.
 
-This directory mostly contains:
-+ qmp commands file (with a .qmp extension)
-+ firmware for qemu machines (for example .elf files)
-+ qemu starter scripts (`run-*-qmp.sh` or `run-*-vanilla.sh`)
+## Setup
 
-qmp-config.sh is a utility script we use to load the '.qmp' command
-files in order to test in a single terminal. It only discards
-the comment and watches if qemu crashes.
+### Requirements
 
-But in order to start qemu the 2 followings commands can be typed
-in 2 different terminals:
+- python with pyyaml module
 
+### QEMU setup
+
+You'll need a qemu with the qapi features to dynamicaly create the
+machines.
+
+For example, you can do:
 ```
-qemu-system-ARCH -display none -preconfig -qmp unix:/tmp/qmp-socket,server -serial mon:stdio ....
-grep -v '^#' some-file.qmp | qmp-shell -v /tmp/qmp-socket
-```
-
-Note that you'll need to load a firmware and exit the preconfig on
-the monitor.
-
-Note that some additional arguments must be given to qemu.
-Generally we gives `-machine none` to start from an empty machine.
-We may need to specify the ram size with eg `-m size=64K`.
-
-Please look at the content of `run-*-qmp.sh` scripts, they
-almost only consists in a qemu starting command line plus one
-qapi to load a firmware.
-
-## opentitan
-
-This corresponds to the qemu `opentitan` machine.
-
-Run one of the following command to start qemu
-with the `opentitan` vanilla C machine or with the `none`
-machine configured using qmp commands.
-
-```
-./run-opentitan-vanilla.sh opentitan-echo.elf
-./run-opentitan-qmp.sh     opentitan-echo.elf
+git submodule update --init --depth 1 qemu
+cd qemu
+./configure --target-list=riscv32-softmmu
+make -C build -j
 ```
 
-These two scripts expect that qemu-system-riscv32 is in the PATH.
+### environment
 
-The opentitan-echo.elf firmware just print back whatever
-characters it receives on the uart. It uses interrupts
-to receive characters.
-
-The firmware sources can be found there:
-https://github.com/GreenSocs/qemu-opentitan-firmware.git
-
-## sifive-e
-
-This correspond to the qemu `sifive_e` machine (implementing the
-sifive's hifive1 board).
-
-Run one of the following command to start qemu
-with the `sifive_e` vanilla C machine or with the `none`
-machine configured using qmp commands.
+You need to put `./scripts` into your PATH and setup qemu environment too
+with the following:
 
 ```
-./run-sifive-e-vanilla.sh sifive-e-hello.elf
-./run-sifive-e-qmp.sh     sifive-e-hello.elf
+export PATH=/path/to/qemu/build:/path/to/qemu/scripts/qmp:$PATH
 ```
 
-These two scripts expect that qemu-system-riscv32 is in the PATH.
-
-The sifive-e-hello.elf firmware is just an hello world. It comes
-from sifive freedom-e-sdk.
-https://github.com/sifive/freedom-e-sdk.git
-
-In that SDK the firmware can be compiled using:
+The `env.sourceme` contains this plus the qemu setup described above.
 ```
-make PROGRAM=hello TARGET=sifive-hifive1 software
+source ./env.sourceme
 ```
 
+## Firmwares
+
+You'll need adequate toolchains if you want to re-compile
+the firmwares. Pre-built copies are provided (using git-lfs).
+
+## test "release"
+
+In order to give upstream access to our tests.
+The 'release' target of the Makefile will fill a directory `qmp-machines`.
+this directory contains 3 things:
++ qmp commands file (to create machines)
++ firmware (binaries to run on the machines)
++ scripts to provide working qemu command lines
+
+```
+make rm-release release
+```
+
+This directory is also a submodule linked to our github. So this is public
+and available to demonstrate our work to the qemu mailing list.
