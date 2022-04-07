@@ -1,0 +1,77 @@
+/dts-v1/;
+
+/include/ "virt-smp1.dts"
+
+/ {
+    
+	psci {
+		migrate = <0xc4000005>;
+		cpu_on = <0xc4000003>;
+		cpu_off = <0x84000002>;
+		cpu_suspend = <0xc4000001>;
+		method = "hvc";
+		compatible = "arm,psci-1.0\0arm,psci-0.2\0arm,psci";
+	};
+
+	cpus {
+		#size-cells = <0x00>;
+		#address-cells = <0x01>;
+
+		cpu-map {
+
+			socket0 {
+
+				cluster0 {
+
+					core1 {
+						cpu = <0x8101>;
+					};
+
+					core2 {
+						cpu = <0x8102>;
+					};
+
+					core3 {
+						cpu = <0x8103>;
+					};
+				};
+			};
+		};
+
+		cpu@0 {
+			enable-method = "psci";
+		};
+
+		cpu@1 {
+			phandle = <0x8101>;
+			reg = <0x01>;
+			enable-method = "psci";
+			compatible = "arm,cortex-a53";
+			device_type = "cpu";
+		};
+
+		cpu@2 {
+			phandle = <0x8102>;
+			reg = <0x02>;
+			enable-method = "psci";
+			compatible = "arm,cortex-a53";
+			device_type = "cpu";
+		};
+
+		cpu@3 {
+			phandle = <0x8103>;
+			reg = <0x03>;
+			enable-method = "psci";
+			compatible = "arm,cortex-a53";
+			device_type = "cpu";
+		};
+	};
+
+	pmu {
+		interrupts = <0x01 0x07 0xf04>;
+	};
+
+	timer {
+		interrupts = <0x01 0x0d 0xf04 0x01 0x0e 0xf04 0x01 0x0b 0xf04 0x01 0x0a 0xf04>;
+	};
+};
