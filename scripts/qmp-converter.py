@@ -1,26 +1,18 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 #
-# Copyright (C) Greensocs
+# Copyright (C) Greensocs 2022
 #
+# SPDX-License-Identifier: MIT
 
+import os
 import sys
 import argparse
 import yaml
-import json
 
-parser = argparse.ArgumentParser(description='Convert qmp command formats')
+sys.path.append(os.path.join(os.path.dirname(__file__), 'python'))
+import qmpgen
 
-parser.add_argument('--mode', '-m', choices=('qmpshell','raw'),
-                    default='qmpshell',
-                    help='output format')
-parser.add_argument('input', nargs='?',
-                    help='input file (stdin if not present)')
-parser.add_argument('--output', '-o',
-                    help='output file (stdout if not present)')
-
-args = parser.parse_args()
-
-def expand_yaml_cmd(entry):
+def _expand_yaml_cmd(entry):
     if isinstance(entry, str):
         return { 'execute': entry }
     elif not isinstance(entry, dict) or len(entry.keys()) != 1:
@@ -39,41 +31,23 @@ def read_short_yaml(filein):
         raise ValueError('Expected a yaml list of commands')
     cmds = []
     for entry in entries:
-        cmds.append(expand_yaml_cmd(entry))
+        cmds.append(_expand_yaml_cmd(entry))
     return cmds
 
-def write_qmpshell(cmds, file):
-    # qmpshell format: cmdname key1=val1 ke2=val2 ...
-    for cmd in cmds:
-        line = str(cmd['execute'])
-        if 'arguments' in cmd:
-            args = cmd['arguments']
-            args = [f"{k}={args[k]}" for k in args.keys()]
-            line = ' '.join([line] + args)
-        print(line, file=file)
+parser = argparse.ArgumentParser(description='Convert qmp command formats',
+                                 parents=(qmpgen.parser,))
 
-def write_raw(cmds, file):
-    # raw qmp format
-    for cmd in cmds:
-        print(json.dumps(cmd), file=file)
+parser.add_argument('input', nargs='?',
+                    help='input file (stdin if not present)')
 
-
-def write_output(cmds, mode, file):
-    if mode == "qmpshell":
-        write_qmpshell(cmds, file)
-    elif mode == "raw":
-        write_raw(cmds, file)
-    else:
-        raise ValueError(f"incorrect mode {mode}")
+args = parser.parse_args()
 
 if args.input:
     with open(args.input) as filein:
         cmds = read_short_yaml(filein)
 else:
     cmds = read_short_yaml(sys.stdin)
+qmpgen.load_commands(cmds)
 
-fileout = sys.stdout
-if args.output:
-    fileout = open(args.output, mode='wt')
-with fileout:
-    write_output(cmds, args.mode, fileout)
+qmpgen.conf_from_parser(args)
+qmpgen.dump_commands()

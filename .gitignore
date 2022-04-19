@@ -1,1 +1,2 @@
-machine.qmp
+/scripts/python/__pycache__
+*.qmp
