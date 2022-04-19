@@ -38,7 +38,7 @@
     driver: riscv.hart_array
     id: cpus
     cpu-type: sifive-e31-riscv-cpu
-    num-harts: 1
+    num-cpus: 1
 
 # PLIC 0xc000000
 - device_add:
@@ -63,7 +63,7 @@
 - qom-set:
     path: plic
     property: unnamed-gpio-out[1]
-    value: cpus/harts[0]/unnamed-gpio-in[11]
+    value: cpus/cpu[0]/unnamed-gpio-in[11]
 
 # ACLINT 0x2000000
 - device_add:
@@ -79,7 +79,7 @@
 - qom-set:
     path: aclint.swi
     property: unnamed-gpio-out[0]
-    value: cpus/harts[0]/unnamed-gpio-in[3]
+    value: cpus/cpu[0]/unnamed-gpio-in[3]
 
 - device_add:
     driver: riscv.aclint.mtimer

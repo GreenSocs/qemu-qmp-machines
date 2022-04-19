@@ -15,7 +15,7 @@
     driver: riscv.hart_array
     id: cpus
     cpu-type: lowrisc-ibex-riscv-cpu
-    num-harts: 1
+    num-cpus: 1
     resetvec: 0x8080
 
 # ROM 0x00008000
@@ -69,7 +69,7 @@
 - qom-set:
     path: plic
     property: unnamed-gpio-out[1]
-    value: cpus/harts[0]/unnamed-gpio-in[11]
+    value: cpus/cpu[0]/unnamed-gpio-in[11]
 
 # UART 0x40000000
 - device_add:
