@@ -1,4 +1,4 @@
-SUBDIRS:=opentitan sifive-hifive1
+SUBDIRS:=riscv-opentitan riscv-hifive1
 
 all: $(SUBDIRS)
 
