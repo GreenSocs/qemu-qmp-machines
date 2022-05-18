@@ -1,15 +1,25 @@
-# QMP Machines
+# Dynamic QAPI machine creation in QEMU
 
-This repo contains machines in order to test dynamic
-creation of machine in QEMU.
+This repository contains the work-in-progress state of the work done
+to create machine dynamically in QEMU.
 
-There are several submodules (qemu and firmware related
+The general goal is to start from an empty QEMU configuration and add every using
+QAPI commands. In practice we target to use the _none_ machine a base and rely
+as little as possible on CLI options. We try to indtroduce QAPI commands required
+to populate the machine with various devices.
+
+QEMU current state is in this [fork](https://github.com/GreenSocs/qemu/tree/qmp-machine).
+See [PATCHES.md](PATCHES.md) for information about current development state.
+
+## Testing setup
+
+This repository contains several submodules (qemu and firmware related
 repositories). Setting them up is not mandatory for testing.
-
-## Setup
 
 ### Requirements
 
+- make
+- dtc
 - python with pyyaml module
 
 ### QEMU setup
@@ -27,35 +37,24 @@ make -C build -j
 
 ### environment
 
-You need to put `./scripts` into your PATH and setup qemu environment too
-with the following:
+You need to put local direcoties into your PATHs:
+```
+export PATH=$PWD/scripts:$PATH
+export PYTHONPATH=$PWD/scripts/python:$PYTHONPATH
+```
 
+Also setup qemu environment too with the following:
 ```
 export PATH=/path/to/qemu/build:/path/to/qemu/scripts/qmp:$PATH
 ```
 
-The `env.sourceme` contains this plus the qemu setup described above.
+The `env.sourceme` contains these operations.
 ```
 source ./env.sourceme
 ```
 
 ## Firmwares
 
-You'll need adequate toolchains if you want to re-compile
+You'll need adequate toolchains if you want to re-compile the firmwares.
 the firmwares. Pre-built copies are provided (using git-lfs).
 
-## test "release"
-
-In order to give upstream access to our tests.
-The 'release' target of the Makefile will fill a directory `qmp-machines`.
-this directory contains 3 things:
-+ qmp commands file (to create machines)
-+ firmware (binaries to run on the machines)
-+ scripts to provide working qemu command lines
-
-```
-make rm-release release
-```
-
-This directory is also a submodule linked to our github. So this is public
-and available to demonstrate our work to the qemu mailing list.
