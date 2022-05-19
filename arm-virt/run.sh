@@ -14,12 +14,14 @@ mode=$1
 smp=$2
 shift 2
 
+FWDIR=${FWDIR:-lfs}
+
 QMP_SOCKET=/tmp/qmp-socket
 commands=machine-smp$smp.qmp
 
-image=output/images/Image
-bootloader=bootloader/bootloader.bin
-rootfs=output/images/rootfs.ext4
+image=$FWDIR/images/Image
+bootloader=$FWDIR/bootloader/bootloader.bin
+rootfs=$FWDIR/images/rootfs.ext4
 dtb=virt-smp$smp.dtb
 
 case $mode in

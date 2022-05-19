@@ -1,0 +1,2 @@
+lfs/bootloader/* filter=lfs diff=lfs merge=lfs -text
+lfs/images/* filter=lfs diff=lfs merge=lfs -text
