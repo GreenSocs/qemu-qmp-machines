@@ -1,0 +1,22 @@
+device_add driver=sysbus-memory id=ram size=16384 readonly=False
+sysbus-mmio-map device=ram addr=268435456
+device_add driver=riscv.hart_array id=cpus cpu-type=lowrisc-ibex-riscv-cpu num-cpus=1 resetvec=32896
+device_add driver=sysbus-memory id=rom size=16384 readonly=True
+sysbus-mmio-map device=rom addr=32768
+device_add driver=sysbus-memory id=flash size=524288 readonly=True
+sysbus-mmio-map device=flash addr=536870912
+device_add driver=unimplemented-device id=flash_virtual size=524288 name=flash_virtual
+sysbus-mmio-map device=flash_virtual addr=2147483648
+device_add driver=riscv.sifive.plic id=plic hart-config=M hartid-base=0 num-sources=180 num-priorities=3 priority-base=0 pending-base=4096 enable-base=8192 enable-stride=32 context-base=2097152 context-stride=8 aperture-size=67129344
+sysbus-mmio-map device=plic addr=1207959552
+qom-set path=plic property=unnamed-gpio-out[1] value=cpus/cpu[0]/unnamed-gpio-in[11]
+device_add driver=ibex-uart id=uart chardev=serial0
+sysbus-mmio-map device=uart addr=1073741824
+qom-set path=uart property=sysbus-irq[0] value=plic/unnamed-gpio-in[1]
+qom-set path=uart property=sysbus-irq[1] value=plic/unnamed-gpio-in[2]
+qom-set path=uart property=sysbus-irq[2] value=plic/unnamed-gpio-in[3]
+qom-set path=uart property=sysbus-irq[3] value=plic/unnamed-gpio-in[4]
+device_add driver=ibex-timer id=timer
+sysbus-mmio-map device=timer addr=1074790400
+qom-set path=timer property=sysbus-irq[0] value=plic/unnamed-gpio-in[126]
+qom-set path=timer property=unnamed-gpio-out[0] value=cpus/harts[0]/unnamed-gpio-in[7]

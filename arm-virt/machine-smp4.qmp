@@ -1,0 +1,302 @@
+qom-set path=/machine property=ram-addr value=1073741824
+device_add driver=cfi.pflash01 id=flash0 sector-length=262144 num-blocks=256 width=4 device-width=2 big-endian=False id0=137 id1=24 id2=0 id3=0 name=virt.flash0
+sysbus-mmio-map device=flash0 addr=0
+device_add driver=cfi.pflash01 id=flash1 sector-length=262144 num-blocks=256 width=4 device-width=2 big-endian=False id0=137 id1=24 id2=0 id3=0 name=virt.flash1
+sysbus-mmio-map device=flash1 addr=67108864
+device_add driver=arm-cpus id=cpus cpu-type=cortex-a53-arm-cpu num-cpus=4 has_el3=False has_el2=False reset-cbar=134217728 start-powered-off=True psci-conduit=2
+qom-set path=cpus/cpu[0] property=start-powered-off value=False
+device_add driver=arm_gic id=gic revision=2 num-cpu=4 num-irq=288 has-security-extensions=False has-virtualization-extensions=False
+sysbus-mmio-map device=gic addr=134217728 mmio=0
+sysbus-mmio-map device=gic addr=134283264 mmio=1
+qom-set path=cpus/cpu[0] property=unnamed-gpio-out[0] value=gic/unnamed-gpio-in[286]
+qom-set path=cpus/cpu[0] property=unnamed-gpio-out[1] value=gic/unnamed-gpio-in[283]
+qom-set path=cpus/cpu[0] property=unnamed-gpio-out[2] value=gic/unnamed-gpio-in[282]
+qom-set path=cpus/cpu[0] property=unnamed-gpio-out[3] value=gic/unnamed-gpio-in[285]
+qom-set path=cpus/cpu[0] property=pmu-interrupt[0] value=gic/unnamed-gpio-in[279]
+qom-set path=gic property=sysbus-irq[0] value=cpus/cpu[0]/unnamed-gpio-in[0]
+qom-set path=gic property=sysbus-irq[4] value=cpus/cpu[0]/unnamed-gpio-in[1]
+qom-set path=gic property=sysbus-irq[8] value=cpus/cpu[0]/unnamed-gpio-in[2]
+qom-set path=gic property=sysbus-irq[12] value=cpus/cpu[0]/unnamed-gpio-in[3]
+qom-set path=cpus/cpu[1] property=unnamed-gpio-out[0] value=gic/unnamed-gpio-in[318]
+qom-set path=cpus/cpu[1] property=unnamed-gpio-out[1] value=gic/unnamed-gpio-in[315]
+qom-set path=cpus/cpu[1] property=unnamed-gpio-out[2] value=gic/unnamed-gpio-in[314]
+qom-set path=cpus/cpu[1] property=unnamed-gpio-out[3] value=gic/unnamed-gpio-in[317]
+qom-set path=cpus/cpu[1] property=pmu-interrupt[0] value=gic/unnamed-gpio-in[311]
+qom-set path=gic property=sysbus-irq[1] value=cpus/cpu[1]/unnamed-gpio-in[0]
+qom-set path=gic property=sysbus-irq[5] value=cpus/cpu[1]/unnamed-gpio-in[1]
+qom-set path=gic property=sysbus-irq[9] value=cpus/cpu[1]/unnamed-gpio-in[2]
+qom-set path=gic property=sysbus-irq[13] value=cpus/cpu[1]/unnamed-gpio-in[3]
+qom-set path=cpus/cpu[2] property=unnamed-gpio-out[0] value=gic/unnamed-gpio-in[350]
+qom-set path=cpus/cpu[2] property=unnamed-gpio-out[1] value=gic/unnamed-gpio-in[347]
+qom-set path=cpus/cpu[2] property=unnamed-gpio-out[2] value=gic/unnamed-gpio-in[346]
+qom-set path=cpus/cpu[2] property=unnamed-gpio-out[3] value=gic/unnamed-gpio-in[349]
+qom-set path=cpus/cpu[2] property=pmu-interrupt[0] value=gic/unnamed-gpio-in[343]
+qom-set path=gic property=sysbus-irq[2] value=cpus/cpu[2]/unnamed-gpio-in[0]
+qom-set path=gic property=sysbus-irq[6] value=cpus/cpu[2]/unnamed-gpio-in[1]
+qom-set path=gic property=sysbus-irq[10] value=cpus/cpu[2]/unnamed-gpio-in[2]
+qom-set path=gic property=sysbus-irq[14] value=cpus/cpu[2]/unnamed-gpio-in[3]
+qom-set path=cpus/cpu[3] property=unnamed-gpio-out[0] value=gic/unnamed-gpio-in[382]
+qom-set path=cpus/cpu[3] property=unnamed-gpio-out[1] value=gic/unnamed-gpio-in[379]
+qom-set path=cpus/cpu[3] property=unnamed-gpio-out[2] value=gic/unnamed-gpio-in[378]
+qom-set path=cpus/cpu[3] property=unnamed-gpio-out[3] value=gic/unnamed-gpio-in[381]
+qom-set path=cpus/cpu[3] property=pmu-interrupt[0] value=gic/unnamed-gpio-in[375]
+qom-set path=gic property=sysbus-irq[3] value=cpus/cpu[3]/unnamed-gpio-in[0]
+qom-set path=gic property=sysbus-irq[7] value=cpus/cpu[3]/unnamed-gpio-in[1]
+qom-set path=gic property=sysbus-irq[11] value=cpus/cpu[3]/unnamed-gpio-in[2]
+qom-set path=gic property=sysbus-irq[15] value=cpus/cpu[3]/unnamed-gpio-in[3]
+device_add driver=arm-gicv2m id=gicv2m base-spi=48 num-spi=64
+sysbus-mmio-map device=gicv2m addr=134348800
+qom-set path=gicv2m property=sysbus-irq[0] value=gic/unnamed-gpio-in[48]
+qom-set path=gicv2m property=sysbus-irq[1] value=gic/unnamed-gpio-in[49]
+qom-set path=gicv2m property=sysbus-irq[2] value=gic/unnamed-gpio-in[50]
+qom-set path=gicv2m property=sysbus-irq[3] value=gic/unnamed-gpio-in[51]
+qom-set path=gicv2m property=sysbus-irq[4] value=gic/unnamed-gpio-in[52]
+qom-set path=gicv2m property=sysbus-irq[5] value=gic/unnamed-gpio-in[53]
+qom-set path=gicv2m property=sysbus-irq[6] value=gic/unnamed-gpio-in[54]
+qom-set path=gicv2m property=sysbus-irq[7] value=gic/unnamed-gpio-in[55]
+qom-set path=gicv2m property=sysbus-irq[8] value=gic/unnamed-gpio-in[56]
+qom-set path=gicv2m property=sysbus-irq[9] value=gic/unnamed-gpio-in[57]
+qom-set path=gicv2m property=sysbus-irq[10] value=gic/unnamed-gpio-in[58]
+qom-set path=gicv2m property=sysbus-irq[11] value=gic/unnamed-gpio-in[59]
+qom-set path=gicv2m property=sysbus-irq[12] value=gic/unnamed-gpio-in[60]
+qom-set path=gicv2m property=sysbus-irq[13] value=gic/unnamed-gpio-in[61]
+qom-set path=gicv2m property=sysbus-irq[14] value=gic/unnamed-gpio-in[62]
+qom-set path=gicv2m property=sysbus-irq[15] value=gic/unnamed-gpio-in[63]
+qom-set path=gicv2m property=sysbus-irq[16] value=gic/unnamed-gpio-in[64]
+qom-set path=gicv2m property=sysbus-irq[17] value=gic/unnamed-gpio-in[65]
+qom-set path=gicv2m property=sysbus-irq[18] value=gic/unnamed-gpio-in[66]
+qom-set path=gicv2m property=sysbus-irq[19] value=gic/unnamed-gpio-in[67]
+qom-set path=gicv2m property=sysbus-irq[20] value=gic/unnamed-gpio-in[68]
+qom-set path=gicv2m property=sysbus-irq[21] value=gic/unnamed-gpio-in[69]
+qom-set path=gicv2m property=sysbus-irq[22] value=gic/unnamed-gpio-in[70]
+qom-set path=gicv2m property=sysbus-irq[23] value=gic/unnamed-gpio-in[71]
+qom-set path=gicv2m property=sysbus-irq[24] value=gic/unnamed-gpio-in[72]
+qom-set path=gicv2m property=sysbus-irq[25] value=gic/unnamed-gpio-in[73]
+qom-set path=gicv2m property=sysbus-irq[26] value=gic/unnamed-gpio-in[74]
+qom-set path=gicv2m property=sysbus-irq[27] value=gic/unnamed-gpio-in[75]
+qom-set path=gicv2m property=sysbus-irq[28] value=gic/unnamed-gpio-in[76]
+qom-set path=gicv2m property=sysbus-irq[29] value=gic/unnamed-gpio-in[77]
+qom-set path=gicv2m property=sysbus-irq[30] value=gic/unnamed-gpio-in[78]
+qom-set path=gicv2m property=sysbus-irq[31] value=gic/unnamed-gpio-in[79]
+qom-set path=gicv2m property=sysbus-irq[32] value=gic/unnamed-gpio-in[80]
+qom-set path=gicv2m property=sysbus-irq[33] value=gic/unnamed-gpio-in[81]
+qom-set path=gicv2m property=sysbus-irq[34] value=gic/unnamed-gpio-in[82]
+qom-set path=gicv2m property=sysbus-irq[35] value=gic/unnamed-gpio-in[83]
+qom-set path=gicv2m property=sysbus-irq[36] value=gic/unnamed-gpio-in[84]
+qom-set path=gicv2m property=sysbus-irq[37] value=gic/unnamed-gpio-in[85]
+qom-set path=gicv2m property=sysbus-irq[38] value=gic/unnamed-gpio-in[86]
+qom-set path=gicv2m property=sysbus-irq[39] value=gic/unnamed-gpio-in[87]
+qom-set path=gicv2m property=sysbus-irq[40] value=gic/unnamed-gpio-in[88]
+qom-set path=gicv2m property=sysbus-irq[41] value=gic/unnamed-gpio-in[89]
+qom-set path=gicv2m property=sysbus-irq[42] value=gic/unnamed-gpio-in[90]
+qom-set path=gicv2m property=sysbus-irq[43] value=gic/unnamed-gpio-in[91]
+qom-set path=gicv2m property=sysbus-irq[44] value=gic/unnamed-gpio-in[92]
+qom-set path=gicv2m property=sysbus-irq[45] value=gic/unnamed-gpio-in[93]
+qom-set path=gicv2m property=sysbus-irq[46] value=gic/unnamed-gpio-in[94]
+qom-set path=gicv2m property=sysbus-irq[47] value=gic/unnamed-gpio-in[95]
+qom-set path=gicv2m property=sysbus-irq[48] value=gic/unnamed-gpio-in[96]
+qom-set path=gicv2m property=sysbus-irq[49] value=gic/unnamed-gpio-in[97]
+qom-set path=gicv2m property=sysbus-irq[50] value=gic/unnamed-gpio-in[98]
+qom-set path=gicv2m property=sysbus-irq[51] value=gic/unnamed-gpio-in[99]
+qom-set path=gicv2m property=sysbus-irq[52] value=gic/unnamed-gpio-in[100]
+qom-set path=gicv2m property=sysbus-irq[53] value=gic/unnamed-gpio-in[101]
+qom-set path=gicv2m property=sysbus-irq[54] value=gic/unnamed-gpio-in[102]
+qom-set path=gicv2m property=sysbus-irq[55] value=gic/unnamed-gpio-in[103]
+qom-set path=gicv2m property=sysbus-irq[56] value=gic/unnamed-gpio-in[104]
+qom-set path=gicv2m property=sysbus-irq[57] value=gic/unnamed-gpio-in[105]
+qom-set path=gicv2m property=sysbus-irq[58] value=gic/unnamed-gpio-in[106]
+qom-set path=gicv2m property=sysbus-irq[59] value=gic/unnamed-gpio-in[107]
+qom-set path=gicv2m property=sysbus-irq[60] value=gic/unnamed-gpio-in[108]
+qom-set path=gicv2m property=sysbus-irq[61] value=gic/unnamed-gpio-in[109]
+qom-set path=gicv2m property=sysbus-irq[62] value=gic/unnamed-gpio-in[110]
+qom-set path=gicv2m property=sysbus-irq[63] value=gic/unnamed-gpio-in[111]
+device_add driver=pl011 id=uart chardev=serial0
+sysbus-mmio-map device=uart addr=150994944
+qom-set path=uart property=sysbus-irq[0] value=gic/unnamed-gpio-in[1]
+device_add driver=pl031 id=rtc
+sysbus-mmio-map device=rtc addr=151060480
+qom-set path=rtc property=sysbus-irq[0] value=gic/unnamed-gpio-in[2]
+device_add driver=gpex-pcihost id=pcihost bypass-iommu=False
+sysbus-mmio-map device=pcihost addr=275146342400 mmio=0 alias=True size=268435456
+sysbus-mmio-map device=pcihost addr=268435456 mmio=1 alias=True offset=268435456 size=788463616
+sysbus-mmio-map device=pcihost addr=549755813888 mmio=1 alias=True offset=268435456 size=549755813888
+sysbus-mmio-map device=pcihost addr=1056899072 mmio=2
+qom-set path=pcihost property=sysbus-irq[0] value=gic/unnamed-gpio-in[3]
+qom-set path=pcihost property=sysbus-irq[1] value=gic/unnamed-gpio-in[4]
+qom-set path=pcihost property=sysbus-irq[2] value=gic/unnamed-gpio-in[5]
+qom-set path=pcihost property=sysbus-irq[3] value=gic/unnamed-gpio-in[6]
+qom-set path=pcihost property=irq-num[0] value=3
+qom-set path=pcihost property=irq-num[1] value=4
+qom-set path=pcihost property=irq-num[2] value=5
+qom-set path=pcihost property=irq-num[3] value=6
+device_add driver=pl061 id=gpio pullups=0 pulldowns=255
+sysbus-mmio-map device=gpio addr=151191552
+qom-set path=gpio property=sysbus-irq[0] value=gic/unnamed-gpio-in[7]
+device_add driver=gpio-key id=key-poweroff register-powerdown-notifier=True
+qom-set path=key-poweroff property=sysbus-irq[0] value=gpio/unnamed-gpio-in[3]
+device_add driver=virtio-mmio id=mmio0
+sysbus-mmio-map device=mmio0 addr=167772160
+qom-set path=mmio0 property=sysbus-irq[0] value=gic/unnamed-gpio-in[16]
+device_add driver=virtio-mmio id=mmio1
+sysbus-mmio-map device=mmio1 addr=167772672
+qom-set path=mmio1 property=sysbus-irq[0] value=gic/unnamed-gpio-in[17]
+device_add driver=virtio-mmio id=mmio2
+sysbus-mmio-map device=mmio2 addr=167773184
+qom-set path=mmio2 property=sysbus-irq[0] value=gic/unnamed-gpio-in[18]
+device_add driver=virtio-mmio id=mmio3
+sysbus-mmio-map device=mmio3 addr=167773696
+qom-set path=mmio3 property=sysbus-irq[0] value=gic/unnamed-gpio-in[19]
+device_add driver=virtio-mmio id=mmio4
+sysbus-mmio-map device=mmio4 addr=167774208
+qom-set path=mmio4 property=sysbus-irq[0] value=gic/unnamed-gpio-in[20]
+device_add driver=virtio-mmio id=mmio5
+sysbus-mmio-map device=mmio5 addr=167774720
+qom-set path=mmio5 property=sysbus-irq[0] value=gic/unnamed-gpio-in[21]
+device_add driver=virtio-mmio id=mmio6
+sysbus-mmio-map device=mmio6 addr=167775232
+qom-set path=mmio6 property=sysbus-irq[0] value=gic/unnamed-gpio-in[22]
+device_add driver=virtio-mmio id=mmio7
+sysbus-mmio-map device=mmio7 addr=167775744
+qom-set path=mmio7 property=sysbus-irq[0] value=gic/unnamed-gpio-in[23]
+device_add driver=virtio-mmio id=mmio8
+sysbus-mmio-map device=mmio8 addr=167776256
+qom-set path=mmio8 property=sysbus-irq[0] value=gic/unnamed-gpio-in[24]
+device_add driver=virtio-mmio id=mmio9
+sysbus-mmio-map device=mmio9 addr=167776768
+qom-set path=mmio9 property=sysbus-irq[0] value=gic/unnamed-gpio-in[25]
+device_add driver=virtio-mmio id=mmio10
+sysbus-mmio-map device=mmio10 addr=167777280
+qom-set path=mmio10 property=sysbus-irq[0] value=gic/unnamed-gpio-in[26]
+device_add driver=virtio-mmio id=mmio11
+sysbus-mmio-map device=mmio11 addr=167777792
+qom-set path=mmio11 property=sysbus-irq[0] value=gic/unnamed-gpio-in[27]
+device_add driver=virtio-mmio id=mmio12
+sysbus-mmio-map device=mmio12 addr=167778304
+qom-set path=mmio12 property=sysbus-irq[0] value=gic/unnamed-gpio-in[28]
+device_add driver=virtio-mmio id=mmio13
+sysbus-mmio-map device=mmio13 addr=167778816
+qom-set path=mmio13 property=sysbus-irq[0] value=gic/unnamed-gpio-in[29]
+device_add driver=virtio-mmio id=mmio14
+sysbus-mmio-map device=mmio14 addr=167779328
+qom-set path=mmio14 property=sysbus-irq[0] value=gic/unnamed-gpio-in[30]
+device_add driver=virtio-mmio id=mmio15
+sysbus-mmio-map device=mmio15 addr=167779840
+qom-set path=mmio15 property=sysbus-irq[0] value=gic/unnamed-gpio-in[31]
+device_add driver=virtio-mmio id=mmio16
+sysbus-mmio-map device=mmio16 addr=167780352
+qom-set path=mmio16 property=sysbus-irq[0] value=gic/unnamed-gpio-in[32]
+device_add driver=virtio-mmio id=mmio17
+sysbus-mmio-map device=mmio17 addr=167780864
+qom-set path=mmio17 property=sysbus-irq[0] value=gic/unnamed-gpio-in[33]
+device_add driver=virtio-mmio id=mmio18
+sysbus-mmio-map device=mmio18 addr=167781376
+qom-set path=mmio18 property=sysbus-irq[0] value=gic/unnamed-gpio-in[34]
+device_add driver=virtio-mmio id=mmio19
+sysbus-mmio-map device=mmio19 addr=167781888
+qom-set path=mmio19 property=sysbus-irq[0] value=gic/unnamed-gpio-in[35]
+device_add driver=virtio-mmio id=mmio20
+sysbus-mmio-map device=mmio20 addr=167782400
+qom-set path=mmio20 property=sysbus-irq[0] value=gic/unnamed-gpio-in[36]
+device_add driver=virtio-mmio id=mmio21
+sysbus-mmio-map device=mmio21 addr=167782912
+qom-set path=mmio21 property=sysbus-irq[0] value=gic/unnamed-gpio-in[37]
+device_add driver=virtio-mmio id=mmio22
+sysbus-mmio-map device=mmio22 addr=167783424
+qom-set path=mmio22 property=sysbus-irq[0] value=gic/unnamed-gpio-in[38]
+device_add driver=virtio-mmio id=mmio23
+sysbus-mmio-map device=mmio23 addr=167783936
+qom-set path=mmio23 property=sysbus-irq[0] value=gic/unnamed-gpio-in[39]
+device_add driver=virtio-mmio id=mmio24
+sysbus-mmio-map device=mmio24 addr=167784448
+qom-set path=mmio24 property=sysbus-irq[0] value=gic/unnamed-gpio-in[40]
+device_add driver=virtio-mmio id=mmio25
+sysbus-mmio-map device=mmio25 addr=167784960
+qom-set path=mmio25 property=sysbus-irq[0] value=gic/unnamed-gpio-in[41]
+device_add driver=virtio-mmio id=mmio26
+sysbus-mmio-map device=mmio26 addr=167785472
+qom-set path=mmio26 property=sysbus-irq[0] value=gic/unnamed-gpio-in[42]
+device_add driver=virtio-mmio id=mmio27
+sysbus-mmio-map device=mmio27 addr=167785984
+qom-set path=mmio27 property=sysbus-irq[0] value=gic/unnamed-gpio-in[43]
+device_add driver=virtio-mmio id=mmio28
+sysbus-mmio-map device=mmio28 addr=167786496
+qom-set path=mmio28 property=sysbus-irq[0] value=gic/unnamed-gpio-in[44]
+device_add driver=virtio-mmio id=mmio29
+sysbus-mmio-map device=mmio29 addr=167787008
+qom-set path=mmio29 property=sysbus-irq[0] value=gic/unnamed-gpio-in[45]
+device_add driver=virtio-mmio id=mmio30
+sysbus-mmio-map device=mmio30 addr=167787520
+qom-set path=mmio30 property=sysbus-irq[0] value=gic/unnamed-gpio-in[46]
+device_add driver=virtio-mmio id=mmio31
+sysbus-mmio-map device=mmio31 addr=167788032
+qom-set path=mmio31 property=sysbus-irq[0] value=gic/unnamed-gpio-in[47]
+device_add driver=fw_cfg_mem id=fw-cfg data_width=8 dma_enabled=True
+sysbus-mmio-map device=fw-cfg addr=151126024 mmio=0
+sysbus-mmio-map device=fw-cfg addr=151126016 mmio=1
+sysbus-mmio-map device=fw-cfg addr=151126032 mmio=2
+device_add driver=platform-bus-device id=platform-bus-device num_irqs=64 mmio_size=33554432
+sysbus-mmio-map device=platform-bus-device addr=201326592
+qom-set path=platform-bus-device property=sysbus-irq[0] value=gic/unnamed-gpio-in[112]
+qom-set path=platform-bus-device property=sysbus-irq[1] value=gic/unnamed-gpio-in[113]
+qom-set path=platform-bus-device property=sysbus-irq[2] value=gic/unnamed-gpio-in[114]
+qom-set path=platform-bus-device property=sysbus-irq[3] value=gic/unnamed-gpio-in[115]
+qom-set path=platform-bus-device property=sysbus-irq[4] value=gic/unnamed-gpio-in[116]
+qom-set path=platform-bus-device property=sysbus-irq[5] value=gic/unnamed-gpio-in[117]
+qom-set path=platform-bus-device property=sysbus-irq[6] value=gic/unnamed-gpio-in[118]
+qom-set path=platform-bus-device property=sysbus-irq[7] value=gic/unnamed-gpio-in[119]
+qom-set path=platform-bus-device property=sysbus-irq[8] value=gic/unnamed-gpio-in[120]
+qom-set path=platform-bus-device property=sysbus-irq[9] value=gic/unnamed-gpio-in[121]
+qom-set path=platform-bus-device property=sysbus-irq[10] value=gic/unnamed-gpio-in[122]
+qom-set path=platform-bus-device property=sysbus-irq[11] value=gic/unnamed-gpio-in[123]
+qom-set path=platform-bus-device property=sysbus-irq[12] value=gic/unnamed-gpio-in[124]
+qom-set path=platform-bus-device property=sysbus-irq[13] value=gic/unnamed-gpio-in[125]
+qom-set path=platform-bus-device property=sysbus-irq[14] value=gic/unnamed-gpio-in[126]
+qom-set path=platform-bus-device property=sysbus-irq[15] value=gic/unnamed-gpio-in[127]
+qom-set path=platform-bus-device property=sysbus-irq[16] value=gic/unnamed-gpio-in[128]
+qom-set path=platform-bus-device property=sysbus-irq[17] value=gic/unnamed-gpio-in[129]
+qom-set path=platform-bus-device property=sysbus-irq[18] value=gic/unnamed-gpio-in[130]
+qom-set path=platform-bus-device property=sysbus-irq[19] value=gic/unnamed-gpio-in[131]
+qom-set path=platform-bus-device property=sysbus-irq[20] value=gic/unnamed-gpio-in[132]
+qom-set path=platform-bus-device property=sysbus-irq[21] value=gic/unnamed-gpio-in[133]
+qom-set path=platform-bus-device property=sysbus-irq[22] value=gic/unnamed-gpio-in[134]
+qom-set path=platform-bus-device property=sysbus-irq[23] value=gic/unnamed-gpio-in[135]
+qom-set path=platform-bus-device property=sysbus-irq[24] value=gic/unnamed-gpio-in[136]
+qom-set path=platform-bus-device property=sysbus-irq[25] value=gic/unnamed-gpio-in[137]
+qom-set path=platform-bus-device property=sysbus-irq[26] value=gic/unnamed-gpio-in[138]
+qom-set path=platform-bus-device property=sysbus-irq[27] value=gic/unnamed-gpio-in[139]
+qom-set path=platform-bus-device property=sysbus-irq[28] value=gic/unnamed-gpio-in[140]
+qom-set path=platform-bus-device property=sysbus-irq[29] value=gic/unnamed-gpio-in[141]
+qom-set path=platform-bus-device property=sysbus-irq[30] value=gic/unnamed-gpio-in[142]
+qom-set path=platform-bus-device property=sysbus-irq[31] value=gic/unnamed-gpio-in[143]
+qom-set path=platform-bus-device property=sysbus-irq[32] value=gic/unnamed-gpio-in[144]
+qom-set path=platform-bus-device property=sysbus-irq[33] value=gic/unnamed-gpio-in[145]
+qom-set path=platform-bus-device property=sysbus-irq[34] value=gic/unnamed-gpio-in[146]
+qom-set path=platform-bus-device property=sysbus-irq[35] value=gic/unnamed-gpio-in[147]
+qom-set path=platform-bus-device property=sysbus-irq[36] value=gic/unnamed-gpio-in[148]
+qom-set path=platform-bus-device property=sysbus-irq[37] value=gic/unnamed-gpio-in[149]
+qom-set path=platform-bus-device property=sysbus-irq[38] value=gic/unnamed-gpio-in[150]
+qom-set path=platform-bus-device property=sysbus-irq[39] value=gic/unnamed-gpio-in[151]
+qom-set path=platform-bus-device property=sysbus-irq[40] value=gic/unnamed-gpio-in[152]
+qom-set path=platform-bus-device property=sysbus-irq[41] value=gic/unnamed-gpio-in[153]
+qom-set path=platform-bus-device property=sysbus-irq[42] value=gic/unnamed-gpio-in[154]
+qom-set path=platform-bus-device property=sysbus-irq[43] value=gic/unnamed-gpio-in[155]
+qom-set path=platform-bus-device property=sysbus-irq[44] value=gic/unnamed-gpio-in[156]
+qom-set path=platform-bus-device property=sysbus-irq[45] value=gic/unnamed-gpio-in[157]
+qom-set path=platform-bus-device property=sysbus-irq[46] value=gic/unnamed-gpio-in[158]
+qom-set path=platform-bus-device property=sysbus-irq[47] value=gic/unnamed-gpio-in[159]
+qom-set path=platform-bus-device property=sysbus-irq[48] value=gic/unnamed-gpio-in[160]
+qom-set path=platform-bus-device property=sysbus-irq[49] value=gic/unnamed-gpio-in[161]
+qom-set path=platform-bus-device property=sysbus-irq[50] value=gic/unnamed-gpio-in[162]
+qom-set path=platform-bus-device property=sysbus-irq[51] value=gic/unnamed-gpio-in[163]
+qom-set path=platform-bus-device property=sysbus-irq[52] value=gic/unnamed-gpio-in[164]
+qom-set path=platform-bus-device property=sysbus-irq[53] value=gic/unnamed-gpio-in[165]
+qom-set path=platform-bus-device property=sysbus-irq[54] value=gic/unnamed-gpio-in[166]
+qom-set path=platform-bus-device property=sysbus-irq[55] value=gic/unnamed-gpio-in[167]
+qom-set path=platform-bus-device property=sysbus-irq[56] value=gic/unnamed-gpio-in[168]
+qom-set path=platform-bus-device property=sysbus-irq[57] value=gic/unnamed-gpio-in[169]
+qom-set path=platform-bus-device property=sysbus-irq[58] value=gic/unnamed-gpio-in[170]
+qom-set path=platform-bus-device property=sysbus-irq[59] value=gic/unnamed-gpio-in[171]
+qom-set path=platform-bus-device property=sysbus-irq[60] value=gic/unnamed-gpio-in[172]
+qom-set path=platform-bus-device property=sysbus-irq[61] value=gic/unnamed-gpio-in[173]
+qom-set path=platform-bus-device property=sysbus-irq[62] value=gic/unnamed-gpio-in[174]
+qom-set path=platform-bus-device property=sysbus-irq[63] value=gic/unnamed-gpio-in[175]
